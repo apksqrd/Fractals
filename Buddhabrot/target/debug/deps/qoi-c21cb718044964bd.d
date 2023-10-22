@@ -1,0 +1,13 @@
+/Users/alvin/Documents/GitHub/Fractals/Buddhabrot/target/debug/deps/qoi-c21cb718044964bd.rmeta: /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/lib.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/decode.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/encode.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/error.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/header.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/pixel.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/types.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/utils.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/consts.rs
+
+/Users/alvin/Documents/GitHub/Fractals/Buddhabrot/target/debug/deps/qoi-c21cb718044964bd.d: /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/lib.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/decode.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/encode.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/error.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/header.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/pixel.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/types.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/utils.rs /Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/consts.rs
+
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/lib.rs:
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/decode.rs:
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/encode.rs:
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/error.rs:
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/header.rs:
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/pixel.rs:
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/types.rs:
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/utils.rs:
+/Users/alvin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/qoi-0.4.1/src/consts.rs:
