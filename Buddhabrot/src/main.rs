@@ -15,12 +15,13 @@ fn main() {
     //     mandelbrot::default_settings::Y_SAMPLE_SIZE as u32,
     //     &String::from("outputs/mandelbrot/test.png"),
     // );
-    save_rgb_raw_to_png(
-        mandelbrot::get_grid_of_rgb_colors(None, None, None, None, None),
-        mandelbrot::default_settings::X_SAMPLE_SIZE as u32,
-        mandelbrot::default_settings::Y_SAMPLE_SIZE as u32,
-        &String::from("outputs/mandelbrot/colors/test.png"),
-    );
+    // save_rgb_raw_to_png(
+    //     mandelbrot::get_grid_of_rgb_colors(None, None, None, None, None),
+    //     mandelbrot::default_settings::X_SAMPLE_SIZE as u32,
+    //     mandelbrot::default_settings::Y_SAMPLE_SIZE as u32,
+    //     &String::from("outputs/mandelbrot/colors/test.png"),
+    // );
+    mandelbrot::get_grid_of_rgb_colors(None, None, None, None, None);
 
     println!("Elapsed: {:.2?}", start.elapsed());
 }

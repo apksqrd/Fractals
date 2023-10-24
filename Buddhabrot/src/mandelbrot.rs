@@ -1,3 +1,6 @@
+extern crate indicatif;
+
+use self::indicatif::ProgressIterator;
 use complex::Complex;
 
 use self::default_settings::{NumberType, MAX_ITERATIONS};
@@ -10,6 +13,11 @@ pub mod default_settings {
     pub const Y_SAMPLE_SIZE: usize = 4096;
     pub const Y_SAMPLE_RANGE: (NumberType, NumberType) = (-1.5, 1.5);
     pub const MAX_ITERATIONS: u32 = 500;
+
+    // I am not adding the Optional<> things from now
+    // until much later because I am not even going to use it
+    // btw i don't actually use this lol
+    pub const SHOW_X_PROGRESS_BAR: bool = true;
 }
 
 // I could (should) put this somewhere else but nrn
@@ -52,7 +60,7 @@ pub fn get_num_iterations_to_escape(
             return i;
         }
 
-        point = point * point + initial_point;
+        point = point.square() + initial_point;
     }
 
     return max_iterations;
@@ -73,7 +81,14 @@ pub fn get_grid_of_iterations(
 
     let mut raw_data = vec![0; x_sample_size * y_sample_size];
 
-    for x_index in 0..x_sample_size {
+    // let x_iterator: iterator_optional_progress!(SHOW_PROGRESS_BAR, x_sample_size);
+    let x_iterator: Box<dyn Iterator<Item = usize>> = if default_settings::SHOW_X_PROGRESS_BAR {
+        Box::new((0..x_sample_size).progress())
+    } else {
+        Box::new((0..x_sample_size))
+    };
+
+    for x_index in x_iterator {
         for y_index in 0..y_sample_size {
             let x_sample = remap(
                 x_index as NumberType,
