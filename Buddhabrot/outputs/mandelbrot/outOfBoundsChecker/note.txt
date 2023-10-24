@@ -1,0 +1,3 @@
+Lol, these are outdated because I was comparing the squared distance to 2, not 4.
+
+I literally thought I double checked that it was four and I could have told you that it was 4, but I made a goof.
