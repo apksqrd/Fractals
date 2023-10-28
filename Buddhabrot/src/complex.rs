@@ -67,6 +67,10 @@ where
     /**
      * Yes, I know ab+ba is 2ab and I can do other stuff.
      * I am just trying not to do scalar multiplication.
+     *
+     * Wait, actually tho, why am I doing this?
+     *
+     * I guess it makes it neater or something
      */
     pub fn square(self) -> Complex<ComponentType> {
         self * self
