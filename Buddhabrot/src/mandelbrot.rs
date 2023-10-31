@@ -80,9 +80,9 @@ pub mod mandelbrot_grid {
         use super::super::NumberType;
 
         pub const X_SAMPLE_SIZE: usize = 4096; // not sure if usize is correct for this
-        pub const X_SAMPLE_RANGE: (NumberType, NumberType) = (-2., 1.);
+        pub const X_SAMPLE_RANGE: (NumberType, NumberType) = (-2.1, 2.1);
         pub const Y_SAMPLE_SIZE: usize = 4096;
-        pub const Y_SAMPLE_RANGE: (NumberType, NumberType) = (-1.5, 1.5);
+        pub const Y_SAMPLE_RANGE: (NumberType, NumberType) = (-2.1, 2.1);
         pub const MAX_ITERATIONS: u32 = 500;
 
         // I am not adding the Optional<> things from now
@@ -117,12 +117,13 @@ pub mod mandelbrot_grid {
             for y_index in 0..y_sample_size {
                 let x_sample = remap(
                     x_index as NumberType,
-                    (0., (x_sample_size + 1) as NumberType),
+                    // do I add one or not?
+                    (0., (x_sample_size) as NumberType),
                     x_sample_range,
                 );
                 let y_sample = remap(
                     y_index as NumberType,
-                    (0., (y_sample_size + 1) as NumberType),
+                    (0., (y_sample_size) as NumberType),
                     y_sample_range,
                 );
 
@@ -130,7 +131,7 @@ pub mod mandelbrot_grid {
 
                 let iterations = get_num_iterations_to_escape(point, max_iterations);
 
-                raw_data[(x_index + x_sample_size * y_index) as usize] = iterations;
+                raw_data[x_index + x_sample_size * y_index] = iterations;
             }
         }
 
