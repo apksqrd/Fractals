@@ -9,7 +9,7 @@ pub mod math;
 pub mod quadratic_recurrence_equation;
 pub mod save_raw_to_png;
 
-use mandelbrot::mandelbrot_grid::{default_settings, get_grid_of_rgb_colors};
+use mandelbrot::mandelbrot_grid::default_settings;
 use save_raw_to_png::save_gray_raw_to_png;
 
 fn main() {
@@ -27,7 +27,7 @@ fn main() {
         ),
         default_settings::X_SAMPLE_SIZE as u32,
         default_settings::Y_SAMPLE_SIZE as u32,
-        &String::from("outputs/buddhabrot/test/test.png"),
+        &String::from("outputs/buddhabrot/test/3.png"),
     );
 
     println!("Elapsed: {:.2?}", start.elapsed());

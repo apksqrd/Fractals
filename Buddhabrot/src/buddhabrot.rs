@@ -1,11 +1,9 @@
 extern crate indicatif;
 
-use std::thread::yield_now;
-
 use self::indicatif::ProgressIterator;
 
 use crate::{
-    complex::{self, Complex},
+    complex::Complex,
     mandelbrot::{self, mandelbrot_iteration, NumberType},
     math::remap,
 };
@@ -145,10 +143,20 @@ pub fn get_grid_of_buddhabrot_density_map(
     density_map
 }
 
-fn density_to_grey(density: u32) -> u8 {
+fn density_to_grey(density: u32, max_density: u32) -> u8 {
     let density_float = density as NumberType; // can just be f64, but who cares
+    let max_density_float = max_density as NumberType; // can just be f64, but who cares
 
-    f64::from((256. * (density_float / (1. + density_float * density_float).sqrt())).floor()) as u8
+    // f64::from((256. * (density_float / (1. + density_float * density_float).sqrt())).floor()) as u8
+
+    // remap(density_float, (0., max_density as NumberType), (0., 255.)).floor() as u8
+
+    // f64::from(
+    //     (255. * (density_float * density_float) / (max_density_float * max_density_float)).ceil(),
+    // ) as u8
+
+    let pre_squared = (density_float - max_density_float) / max_density_float;
+    f64::from((255. * (1. - pre_squared * pre_squared)).ceil()) as u8
 }
 
 pub fn get_grid_of_buddhabrot_grey(
@@ -167,8 +175,9 @@ pub fn get_grid_of_buddhabrot_grey(
         start_iteration,
         max_iterations,
     );
+    let max_density = *density_map.iter().max().unwrap();
     density_map
         .iter()
-        .map(|num_iterations| density_to_grey(*num_iterations))
+        .map(|num_iterations| density_to_grey(*num_iterations, max_density))
         .collect()
 }
