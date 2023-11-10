@@ -1,4 +1,6 @@
-use image::{GrayImage, ImageFormat, RgbImage};
+extern crate image;
+
+use self::image::{GrayImage, ImageFormat, RgbImage};
 
 pub fn save_gray_raw_to_png(raw_gray_data: Vec<u8>, width: u32, height: u32, path: &String) {
     // technically I should think of reflections, but who cares

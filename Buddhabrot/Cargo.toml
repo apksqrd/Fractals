@@ -3,6 +3,10 @@ name = "buddhabrot"
 version = "0.0.1"
 authors = ["apksqrd"]
 
+[[bin]]
+name = "buddhabrot"
+path = "src/main.rs"
+
 [dependencies]
 image = "0.24"
 indicatif = "0.17"
