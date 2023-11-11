@@ -1,0 +1,6 @@
+Max iterations: 500
+
+
+Elapsed: 411.60s
+
+Notes: Only difference between this and buddhabrot/test/3.png is that this uses random and the other uses uniform distribution (1 initial sample per pixel)

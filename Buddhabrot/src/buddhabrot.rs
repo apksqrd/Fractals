@@ -1,6 +1,9 @@
 extern crate indicatif;
+extern crate rand;
 
 use self::indicatif::ProgressIterator;
+use self::rand::distributions::Uniform;
+use self::rand::{thread_rng, Rng};
 
 use crate::{
     complex::Complex,
@@ -9,7 +12,7 @@ use crate::{
 };
 
 fn increment_density_map_integers(
-    density_map: &mut Vec<u32>,
+    density_map: &mut Vec<u64>,
     x_index: usize,
     y_index: usize,
     x_sample_size: usize,
@@ -24,7 +27,7 @@ fn increment_density_map_integers(
 // fn remap_data_to_index()
 
 fn remapped_increment_density_map(
-    density_map: &mut Vec<u32>,
+    density_map: &mut Vec<u64>,
     x_sample: NumberType,
     y_sample: NumberType,
     x_sample_size: usize,
@@ -42,7 +45,7 @@ fn remapped_increment_density_map(
 }
 
 fn increment_density_map_complex(
-    density_map: &mut Vec<u32>,
+    density_map: &mut Vec<u64>,
     point_to_increase: Complex<NumberType>,
     x_sample_size: usize,
     y_sample_size: usize,
@@ -61,14 +64,14 @@ fn increment_density_map_complex(
 }
 
 fn increment_density_map_with_buddhabrot_from_point(
-    density_map: &mut Vec<u32>,
+    density_map: &mut Vec<u64>,
     initial_point: Complex<NumberType>,
     x_sample_size: usize,
     x_sample_range: (NumberType, NumberType),
     y_sample_size: usize,
     y_sample_range: (NumberType, NumberType),
-    start_iteration: u32,
-    max_iterations: u32,
+    start_iteration: u64,
+    max_iterations: u64,
 ) {
     let iteration_points =
         mandelbrot_iteration::get_iteration_points(initial_point, max_iterations, true, true);
@@ -100,9 +103,9 @@ pub fn get_grid_of_buddhabrot_density_map(
     x_sample_range: (NumberType, NumberType),
     y_sample_size: usize,
     y_sample_range: (NumberType, NumberType),
-    start_iteration: u32,
-    max_iterations: u32,
-) -> Vec<u32> {
+    start_iteration: u64,
+    max_iterations: u64,
+) -> Vec<u64> {
     let mut density_map = vec![0; x_sample_size * y_sample_size];
 
     let x_iterator: Box<dyn Iterator<Item = usize>> =
@@ -143,7 +146,49 @@ pub fn get_grid_of_buddhabrot_density_map(
     density_map
 }
 
-fn density_to_grey(density: u32, max_density: u32) -> u8 {
+pub fn get_grid_of_buddhabrot_density_map_random_samples(
+    x_sample_size: usize,
+    x_sample_range: (NumberType, NumberType),
+    y_sample_size: usize,
+    y_sample_range: (NumberType, NumberType),
+    num_samples: u64,
+    start_iteration: u64,
+    max_iterations: u64,
+) -> Vec<u64> {
+    let mut density_map = vec![0; x_sample_size * y_sample_size];
+
+    let samples_iterator: Box<dyn Iterator<Item = usize>> =
+        if mandelbrot::mandelbrot_grid::default_settings::SHOW_X_PROGRESS_BAR {
+            Box::new((0..num_samples as usize).progress())
+        } else {
+            Box::new(0..num_samples as usize)
+        };
+
+    let mut rng = thread_rng();
+    let random_float_generator = Uniform::new(-2., 2.);
+
+    for _ in samples_iterator {
+        let x_sample = rng.sample(random_float_generator);
+        let y_sample = rng.sample(random_float_generator);
+
+        let point = Complex::new(x_sample, y_sample);
+
+        increment_density_map_with_buddhabrot_from_point(
+            &mut density_map,
+            point,
+            x_sample_size,
+            x_sample_range,
+            y_sample_size,
+            y_sample_range,
+            start_iteration,
+            max_iterations,
+        )
+    }
+
+    density_map
+}
+
+fn density_to_grey(density: u64, max_density: u64) -> u8 {
     let density_float = density as NumberType; // can just be f64, but who cares
     let max_density_float = max_density as NumberType; // can just be f64, but who cares
 
@@ -159,22 +204,7 @@ fn density_to_grey(density: u32, max_density: u32) -> u8 {
     f64::from((255. * (1. - pre_squared * pre_squared)).ceil()) as u8
 }
 
-pub fn get_grid_of_buddhabrot_grey(
-    x_sample_size: usize,
-    x_sample_range: (NumberType, NumberType),
-    y_sample_size: usize,
-    y_sample_range: (NumberType, NumberType),
-    start_iteration: u32,
-    max_iterations: u32,
-) -> Vec<u8> {
-    let density_map = get_grid_of_buddhabrot_density_map(
-        x_sample_size,
-        x_sample_range,
-        y_sample_size,
-        y_sample_range,
-        start_iteration,
-        max_iterations,
-    );
+pub fn density_map_to_grey(density_map: &Vec<u64>) -> Vec<u8> {
     let max_density = *density_map.iter().max().unwrap();
     density_map
         .iter()

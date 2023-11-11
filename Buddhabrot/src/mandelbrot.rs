@@ -19,8 +19,8 @@ pub mod mandelbrot_iteration {
 
     pub fn get_num_iterations_to_escape(
         initial_point: Complex<NumberType>,
-        max_iterations: u32,
-    ) -> u32 {
+        max_iterations: u64,
+    ) -> u64 {
         // NumberType
         let mut point = Complex::new(0., 0.);
 
@@ -40,7 +40,7 @@ pub mod mandelbrot_iteration {
     /// * `should_remove_out_of_bounds_point` - Only matters when can end early is enabled
     pub fn get_iteration_points(
         initial_point: Complex<NumberType>,
-        max_iterations: u32,
+        max_iterations: u64,
         can_end_early_out_of_bounds: bool,
         should_remove_out_of_bounds_point: bool,
     ) -> Vec<Complex<NumberType>> {
@@ -83,7 +83,7 @@ pub mod mandelbrot_grid {
         pub const X_SAMPLE_RANGE: (NumberType, NumberType) = (-2.1, 2.1);
         pub const Y_SAMPLE_SIZE: usize = 4096;
         pub const Y_SAMPLE_RANGE: (NumberType, NumberType) = (-2.1, 2.1);
-        pub const MAX_ITERATIONS: u32 = 500;
+        pub const MAX_ITERATIONS: u64 = 500;
 
         // I am not adding the Optional<> things from now
         // until much later because I am not even going to use it
@@ -96,8 +96,8 @@ pub mod mandelbrot_grid {
         x_sample_range: Option<(NumberType, NumberType)>,
         y_sample_size: Option<usize>,
         y_sample_range: Option<(NumberType, NumberType)>,
-        max_iterations: Option<u32>,
-    ) -> Vec<u32> {
+        max_iterations: Option<u64>,
+    ) -> Vec<u64> {
         let x_sample_size = x_sample_size.unwrap_or(default_settings::X_SAMPLE_SIZE);
         let x_sample_range = x_sample_range.unwrap_or(default_settings::X_SAMPLE_RANGE);
         let y_sample_size = y_sample_size.unwrap_or(default_settings::Y_SAMPLE_SIZE);
@@ -138,7 +138,7 @@ pub mod mandelbrot_grid {
         raw_data
     }
 
-    fn num_iterations_to_gray_color(num_iterations: u32, max_iterations: u32) -> u8 {
+    fn num_iterations_to_gray_color(num_iterations: u64, max_iterations: u64) -> u8 {
         if num_iterations == max_iterations {
             return 0;
         }
@@ -164,7 +164,7 @@ pub mod mandelbrot_grid {
         x_sample_range: Option<(NumberType, NumberType)>,
         y_sample_size: Option<usize>,
         y_sample_range: Option<(NumberType, NumberType)>,
-        max_iterations: Option<u32>,
+        max_iterations: Option<u64>,
     ) -> Vec<u8> {
         let grid_of_iterations = get_grid_of_iterations(
             x_sample_size,
@@ -184,7 +184,7 @@ pub mod mandelbrot_grid {
             .collect()
     }
 
-    fn num_iterations_to_rgb_color(num_iterations: u32, max_iterations: u32) -> [u8; 3] {
+    fn num_iterations_to_rgb_color(num_iterations: u64, max_iterations: u64) -> [u8; 3] {
         if num_iterations == max_iterations {
             return [0, 0, 0];
         }
@@ -213,7 +213,7 @@ pub mod mandelbrot_grid {
         x_sample_range: Option<(NumberType, NumberType)>,
         y_sample_size: Option<usize>,
         y_sample_range: Option<(NumberType, NumberType)>,
-        max_iterations: Option<u32>,
+        max_iterations: Option<u64>,
     ) -> Vec<u8> {
         let grid_of_iterations = get_grid_of_iterations(
             x_sample_size,
