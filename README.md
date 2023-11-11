@@ -7,8 +7,11 @@ My python mandelbrot is pretty cool and you can find it here: <https://github.co
 This is the rust-generated one:
 ![rust-generated-dist-sqrd-method-500-iter-4096x4096](Buddhabrot/outputs/mandelbrot/colors/test.png)
 
-This is the Buddhabrot, I haven't tried anything to make it cooler yet.
-![rust-generated-initial-buddhabrot-4096x4096](Buddhabrot/outputs/buddhabrot/test/initial.png)
+This is the best Buddhabrot.
+![rust-generated-buddhabrot-4096x4096-100000000-samples](Buddhabrot/outputs/buddhabrot/test/100000000_random_samples/100000000_random_samples.png)
+
+This is a colored Buddhabrot.
+![rust-generated-false-color-buddhabrot](Buddhabrot/outputs/buddhabrot/test/color_test_1/color_test_1.png)
 
 TODO: Include extra information in outputs (such as logging the time taken and the parameters)
 TODO: save the raw data to make it easy to add more data iteratively. (is there an algorithm to find a new point in an area that hasn't been covered much so far, the easy way would just be to create a completely random point and after a while it will balance out but IDK)
