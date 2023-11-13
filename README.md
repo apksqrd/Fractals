@@ -15,6 +15,7 @@ This is a colored Buddhabrot.
 
 TODO: Include extra information in outputs (such as logging the time taken and the parameters)
 TODO: save the raw data to make it easy to add more data iteratively. (is there an algorithm to find a new point in an area that hasn't been covered much so far, the easy way would just be to create a completely random point and after a while it will balance out but IDK)
+TODO: use the fact that buddhabrot and mandelbrot are symmetrical
 TODO: Optimize mandelbrot, maybe use a profiler and multithread
 TODO: change the Option type thing for default settings, just make it a macro
 TODO: Julia sets (combine Julia and mandelbrot)

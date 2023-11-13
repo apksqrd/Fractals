@@ -1,0 +1,5 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./Buddhabrot/Cargo.toml"
+    ]
+}
