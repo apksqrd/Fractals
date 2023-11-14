@@ -5,7 +5,6 @@ pub mod complex;
 pub mod mandelbrot;
 pub mod math;
 pub mod multithread_demo;
-pub mod quadratic_recurrence_equation;
 pub mod save_raw_to_png;
 
 use std::time::Instant;
