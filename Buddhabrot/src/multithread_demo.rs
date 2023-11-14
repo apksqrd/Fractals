@@ -177,7 +177,7 @@ mod tests {
     #[test]
     fn test() {
         let initial_density_map: Vec<u64> = vec![0; 16000];
-        let indices_to_increment: Vec<usize> = vec![0; 100000000];
+        let indices_to_increment: Vec<usize> = vec![0; 1000000000];
 
         // let mut rng = rand::thread_rng();
         // let random_index_generator = Uniform::new(0, initial_density_map.len());

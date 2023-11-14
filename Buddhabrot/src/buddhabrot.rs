@@ -1,14 +1,6 @@
 extern crate indicatif;
 extern crate rand;
 
-use self::increment_density_map::increment_density_map_with_buddhabrot_from_point;
-use self::indicatif::ProgressIterator;
-use self::rand::distributions::Uniform;
-use self::rand::{thread_rng, Rng};
-use complex::Complex;
-use mandelbrot::{self, NumberType};
-use math::remap;
-
 mod increment_density_map {
     use complex::Complex;
     use mandelbrot::mandelbrot_iteration;
@@ -103,35 +95,89 @@ mod increment_density_map {
     }
 }
 
-pub fn get_of_buddhabrot_density_map(
-    x_sample_size: usize,
-    x_sample_range: (NumberType, NumberType),
-    y_sample_size: usize,
-    y_sample_range: (NumberType, NumberType),
-    start_iteration: u64,
-    max_iterations: u64,
-) -> Vec<u64> {
-    let mut density_map = vec![0; x_sample_size * y_sample_size];
+pub mod buddhabrot_density_map {
+    use std::thread::{self, JoinHandle};
 
-    let x_iterator: Box<dyn Iterator<Item = usize>> =
-        if mandelbrot::mandelbrot_grid::default_settings::SHOW_X_PROGRESS_BAR {
-            Box::new((0..x_sample_size).progress())
-        } else {
-            Box::new(0..x_sample_size)
-        };
+    use super::increment_density_map::increment_density_map_with_buddhabrot_from_point;
+    use super::indicatif::ProgressIterator;
+    use super::rand::distributions::Uniform;
+    use super::rand::{thread_rng, Rng};
+    use complex::Complex;
+    use mandelbrot::{self, NumberType};
+    use math::remap;
 
-    for x_index in x_iterator {
-        for y_index in 0..y_sample_size {
-            let x_sample = remap(
-                x_index as NumberType,
-                (0., (x_sample_size) as NumberType),
-                x_sample_range,
-            );
-            let y_sample = remap(
-                y_index as NumberType,
-                (0., (y_sample_size) as NumberType),
-                y_sample_range,
-            );
+    pub fn get_buddhabrot_density_map(
+        x_sample_size: usize,
+        x_sample_range: (NumberType, NumberType),
+        y_sample_size: usize,
+        y_sample_range: (NumberType, NumberType),
+        start_iteration: u64,
+        max_iterations: u64,
+    ) -> Vec<u64> {
+        let mut density_map = vec![0; x_sample_size * y_sample_size];
+
+        let x_iterator: Box<dyn Iterator<Item = usize>> =
+            if mandelbrot::mandelbrot_grid::default_settings::SHOW_X_PROGRESS_BAR {
+                Box::new((0..x_sample_size).progress())
+            } else {
+                Box::new(0..x_sample_size)
+            };
+
+        for x_index in x_iterator {
+            for y_index in 0..y_sample_size {
+                let x_sample = remap(
+                    x_index as NumberType,
+                    (0., (x_sample_size) as NumberType),
+                    x_sample_range,
+                );
+                let y_sample = remap(
+                    y_index as NumberType,
+                    (0., (y_sample_size) as NumberType),
+                    y_sample_range,
+                );
+
+                let point = Complex::new(x_sample, y_sample);
+
+                increment_density_map_with_buddhabrot_from_point(
+                    &mut density_map,
+                    point,
+                    x_sample_size,
+                    x_sample_range,
+                    y_sample_size,
+                    y_sample_range,
+                    start_iteration,
+                    max_iterations,
+                )
+            }
+        }
+
+        density_map
+    }
+
+    pub fn get_buddhabrot_density_map_random_samples(
+        x_sample_size: usize,
+        x_sample_range: (NumberType, NumberType),
+        y_sample_size: usize,
+        y_sample_range: (NumberType, NumberType),
+        num_samples: u64,
+        start_iteration: u64,
+        max_iterations: u64,
+    ) -> Vec<u64> {
+        let mut density_map = vec![0; x_sample_size * y_sample_size];
+
+        let samples_iterator: Box<dyn Iterator<Item = usize>> =
+            if mandelbrot::mandelbrot_grid::default_settings::SHOW_X_PROGRESS_BAR {
+                Box::new((0..num_samples as usize).progress())
+            } else {
+                Box::new(0..num_samples as usize)
+            };
+
+        let mut rng = thread_rng();
+        let random_float_generator = Uniform::new(-2., 2.);
+
+        for _ in samples_iterator {
+            let x_sample = rng.sample(random_float_generator);
+            let y_sample = rng.sample(random_float_generator);
 
             let point = Complex::new(x_sample, y_sample);
 
@@ -146,51 +192,94 @@ pub fn get_of_buddhabrot_density_map(
                 max_iterations,
             )
         }
+
+        density_map
     }
 
-    density_map
-}
+    pub fn get_buddhabrot_density_map_random_samples_multithread(
+        x_sample_size: usize,
+        x_sample_range: (NumberType, NumberType),
+        y_sample_size: usize,
+        y_sample_range: (NumberType, NumberType),
+        num_samples: u64,
+        start_iteration: u64,
+        max_iterations: u64,
+        num_thread_split_layers: u64,
+    ) -> Vec<u64> {
+        if num_thread_split_layers <= 1 {
+            // solve normally
+            return get_buddhabrot_density_map_random_samples(
+                x_sample_size,
+                x_sample_range,
+                y_sample_size,
+                y_sample_range,
+                num_samples,
+                start_iteration,
+                max_iterations,
+            );
+        }
 
-pub fn get_buddhabrot_density_map_random_samples(
-    x_sample_size: usize,
-    x_sample_range: (NumberType, NumberType),
-    y_sample_size: usize,
-    y_sample_range: (NumberType, NumberType),
-    num_samples: u64,
-    start_iteration: u64,
-    max_iterations: u64,
-) -> Vec<u64> {
-    let mut density_map = vec![0; x_sample_size * y_sample_size];
+        let left_thread: JoinHandle<Vec<u64>>;
+        {
+            // left
+            let x_sample_size = x_sample_size;
+            let x_sample_range = x_sample_range;
+            let y_sample_size = y_sample_size;
+            let y_sample_range = y_sample_range;
+            let num_samples = num_samples;
+            let start_iteration = start_iteration;
+            let max_iterations = max_iterations;
+            let num_thread_split_layers = num_thread_split_layers;
 
-    let samples_iterator: Box<dyn Iterator<Item = usize>> =
-        if mandelbrot::mandelbrot_grid::default_settings::SHOW_X_PROGRESS_BAR {
-            Box::new((0..num_samples as usize).progress())
-        } else {
-            Box::new(0..num_samples as usize)
-        };
+            left_thread = thread::spawn(move || {
+                get_buddhabrot_density_map_random_samples_multithread(
+                    x_sample_size,
+                    x_sample_range,
+                    y_sample_size,
+                    y_sample_range,
+                    num_samples / 2,
+                    start_iteration,
+                    max_iterations,
+                    num_thread_split_layers - 1,
+                )
+            });
+        }
 
-    let mut rng = thread_rng();
-    let random_float_generator = Uniform::new(-2., 2.);
+        let right_thread: JoinHandle<Vec<u64>>;
+        {
+            // right
+            let x_sample_size = x_sample_size;
+            let x_sample_range = x_sample_range;
+            let y_sample_size = y_sample_size;
+            let y_sample_range = y_sample_range;
+            let num_samples = num_samples;
+            let start_iteration = start_iteration;
+            let max_iterations = max_iterations;
+            let num_thread_split_layers = num_thread_split_layers;
 
-    for _ in samples_iterator {
-        let x_sample = rng.sample(random_float_generator);
-        let y_sample = rng.sample(random_float_generator);
+            right_thread = thread::spawn(move || {
+                get_buddhabrot_density_map_random_samples_multithread(
+                    x_sample_size,
+                    x_sample_range,
+                    y_sample_size,
+                    y_sample_range,
+                    num_samples - (num_samples / 2),
+                    start_iteration,
+                    max_iterations,
+                    num_thread_split_layers - 1,
+                )
+            });
+        }
 
-        let point = Complex::new(x_sample, y_sample);
+        let left_result = left_thread.join().unwrap();
+        let right_result = right_thread.join().unwrap();
 
-        increment_density_map_with_buddhabrot_from_point(
-            &mut density_map,
-            point,
-            x_sample_size,
-            x_sample_range,
-            y_sample_size,
-            y_sample_range,
-            start_iteration,
-            max_iterations,
-        )
+        left_result
+            .iter()
+            .zip(&right_result)
+            .map(|(a, b)| *a + *b)
+            .collect()
     }
-
-    density_map
 }
 
 pub mod gray_buddhabrot {
@@ -223,6 +312,7 @@ pub mod gray_buddhabrot {
 
 pub mod rgb_buddhabrot {
     use std::cmp::min;
+    use std::thread::{self, JoinHandle};
 
     use super::gray_buddhabrot::density_map_to_gray;
     use super::increment_density_map::increment_density_map_complex;
@@ -241,7 +331,7 @@ pub mod rgb_buddhabrot {
         y_sample_size: usize,
         y_sample_range: (NumberType, NumberType),
         start_iteration: u64,
-        max_iterations_triple: [u64; 3],
+        max_iterations_triple: &[u64; 3],
     ) {
         let largest_max_iteration = *max_iterations_triple.iter().max().unwrap();
 
@@ -286,7 +376,7 @@ pub mod rgb_buddhabrot {
         y_sample_range: (NumberType, NumberType),
         num_samples: u64,
         start_iteration: u64,
-        max_iterations_triple: [u64; 3],
+        max_iterations_triple: &[u64; 3],
     ) -> [Vec<u64>; 3] {
         let mut triple_density_map = [
             vec![0 as u64; x_sample_size * y_sample_size],
@@ -323,6 +413,111 @@ pub mod rgb_buddhabrot {
         }
 
         triple_density_map
+    }
+
+    pub fn get_buddhabrot_triple_density_map_random_samples_multithreaded(
+        x_sample_size: usize,
+        x_sample_range: (NumberType, NumberType),
+        y_sample_size: usize,
+        y_sample_range: (NumberType, NumberType),
+        num_samples: u64,
+        start_iteration: u64,
+        max_iterations_triple: &[u64; 3],
+        num_thread_split_layers: u64,
+    ) -> [Vec<u64>; 3] {
+        if num_thread_split_layers <= 1 {
+            // solve normally
+            return get_buddhabrot_triple_density_map_random_samples(
+                x_sample_size,
+                x_sample_range,
+                y_sample_size,
+                y_sample_range,
+                num_samples,
+                start_iteration,
+                max_iterations_triple,
+            );
+        }
+
+        let left_thread: JoinHandle<[Vec<u64>; 3]>;
+        {
+            // left
+            let x_sample_size = x_sample_size;
+            let x_sample_range = x_sample_range;
+            let y_sample_size = y_sample_size;
+            let y_sample_range = y_sample_range;
+            let num_samples = num_samples;
+            let start_iteration = start_iteration;
+            let max_iterations_triple = [
+                max_iterations_triple[0],
+                max_iterations_triple[1],
+                max_iterations_triple[2],
+            ];
+            let num_thread_split_layers = num_thread_split_layers;
+
+            left_thread = thread::spawn(move || {
+                get_buddhabrot_triple_density_map_random_samples_multithreaded(
+                    x_sample_size,
+                    x_sample_range,
+                    y_sample_size,
+                    y_sample_range,
+                    num_samples / 2,
+                    start_iteration,
+                    &max_iterations_triple,
+                    num_thread_split_layers - 1,
+                )
+            });
+        }
+
+        let right_thread: JoinHandle<[Vec<u64>; 3]>;
+        {
+            // right
+            let x_sample_size = x_sample_size;
+            let x_sample_range = x_sample_range;
+            let y_sample_size = y_sample_size;
+            let y_sample_range = y_sample_range;
+            let num_samples = num_samples;
+            let start_iteration = start_iteration;
+            let max_iterations_triple = [
+                max_iterations_triple[0],
+                max_iterations_triple[1],
+                max_iterations_triple[2],
+            ];
+            let num_thread_split_layers = num_thread_split_layers;
+
+            right_thread = thread::spawn(move || {
+                get_buddhabrot_triple_density_map_random_samples_multithreaded(
+                    x_sample_size,
+                    x_sample_range,
+                    y_sample_size,
+                    y_sample_range,
+                    num_samples / 2,
+                    start_iteration,
+                    &max_iterations_triple,
+                    num_thread_split_layers - 1,
+                )
+            });
+        }
+
+        let left_result = left_thread.join().unwrap();
+        let right_result = right_thread.join().unwrap();
+
+        [
+            left_result[0]
+                .iter()
+                .zip(&right_result[0])
+                .map(|(a, b)| *a + *b)
+                .collect(),
+            left_result[1]
+                .iter()
+                .zip(&right_result[1])
+                .map(|(a, b)| *a + *b)
+                .collect(),
+            left_result[2]
+                .iter()
+                .zip(&right_result[2])
+                .map(|(a, b)| *a + *b)
+                .collect(),
+        ]
     }
 
     pub fn triple_density_map_to_rgb(triple_density_map: &[Vec<u64>; 3]) -> Vec<u8> {

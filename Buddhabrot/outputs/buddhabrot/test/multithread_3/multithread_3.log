@@ -1,0 +1,18 @@
+Parameters:
+4092,
+default_settings::X_SAMPLE_RANGE,
+4092,
+default_settings::Y_SAMPLE_RANGE,
+1000000000,
+2,
+&[5000, 500, 50],
+5
+
+Elapsed: 8740.46s
+
+Note:
+    Whew! That took a while (around 2 hour 20 min).
+    I ran it right before bed, and I've never really done something this big
+    so I was worried that something bad would happen. luckily it turned out pretty cool.
+    I'm not getting the really cool and sharp images like I wanted,
+    but I think I am done with the Buddhabrot set for now.

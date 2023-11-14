@@ -1,0 +1,23 @@
+Parameters
+default_settings::X_SAMPLE_SIZE,
+default_settings::X_SAMPLE_RANGE,
+default_settings::Y_SAMPLE_SIZE,
+default_settings::Y_SAMPLE_RANGE,
+num_samples: 100000000,
+start_iteration: 2,
+default_settings::MAX_ITERATIONS,
+num_thread_split_layers: 4
+
+Default settings (might have been used in parameters):
+pub const X_SAMPLE_SIZE: usize = 4096; // not sure if usize is correct for this
+pub const X_SAMPLE_RANGE: (NumberType, NumberType) = (-2.1, 2.1);
+pub const Y_SAMPLE_SIZE: usize = 4096;
+pub const Y_SAMPLE_RANGE: (NumberType, NumberType) = (-2.1, 2.1);
+pub const MAX_ITERATIONS: u64 = 500;
+
+Elapsed: 92.28s
+
+Notes:
+    This should have been the same in terms of the results as 100000000 random samples.
+    The only difference should've been the multithreading, but this one seems brighter
+    (I might've changd the algorithm for density to grays without realizing it).

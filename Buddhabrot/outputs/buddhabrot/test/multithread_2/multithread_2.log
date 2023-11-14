@@ -1,0 +1,14 @@
+Parameters:
+512,
+default_settings::X_SAMPLE_RANGE,
+512,
+default_settings::Y_SAMPLE_RANGE,
+10000000,
+2,
+&[5000, 500, 50],
+4
+
+Elapsed: 50.70s
+
+Notes:
+    Should be the same as color_test_1 but again, this is brighter...
