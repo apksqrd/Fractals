@@ -1,0 +1,7 @@
+A curved (where each value is shifted, like a test/grading curve) version of outputs/buddhabrot/test/multithread_3/multithread_3.png.
+
+The purpose was to make it look brighter.
+
+Another curve idea is to make it so for the curved scores, if I chose any two ranges with the same lengths, then there will be an equal amount of cases in each range.
+
+Btw I just realized that multithread is 4092x4092, not 4096x4096. Just an annoying typo.
