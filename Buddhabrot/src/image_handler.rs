@@ -19,3 +19,17 @@ pub fn save_rgb_raw_to_png(raw_rgb_data: Vec<u8>, width: u32, height: u32, path:
 pub fn get_png_as_raw_rgb(path: &String) -> Vec<u8> {
     Reader::open(path).unwrap().decode().unwrap().into_bytes()
 }
+
+// put somewhere else?
+pub fn get_transpose_rgb_square_grid(original: &Vec<u8>) -> Vec<u8> {
+    let len = original.len();
+    let side_len = ((len / 3) as f64).sqrt() as usize;
+
+    (0..len)
+        .into_iter()
+        .map(|index| {
+            original
+                [side_len * 3 * ((index / 3) % side_len) + 3 * ((index / 3) / side_len) + index % 3]
+        })
+        .collect()
+}
